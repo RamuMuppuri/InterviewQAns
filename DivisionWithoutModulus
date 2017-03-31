@@ -1,0 +1,58 @@
+public class Program
+    {
+        public static void Main(string[] args)
+        {     
+         Console.WriteLine("Enter Dividend:");
+         double N= double.Parse(Console.ReadLine());
+            
+         Console.Write("Enter Divisor:");
+         double D =double.Parse(Console.ReadLine());
+            
+            double N=90;
+            double D=3;
+            bool result = divisionWithoutModulus(N, D);
+             switch(result)
+             {
+                case true:
+                   Console.WriteLine("It is divisible by 3 ");
+                   break;
+                case false:
+                    Console.WriteLine("Not Divisible by 3");
+                   break;
+                default:
+                    Console.WriteLine(" No Result");
+                   break;
+             }
+         }
+         public static bool divisionWithoutModulus(double N, double D)
+         {
+              int q=0;
+              if(N== 0)
+              {
+                  Console.WriteLine("Quotent =0");
+                  return false;
+              }
+              else if(D ==0)
+              {
+                  Console.WriteLine("Divided By Zero");
+                  return false;
+              }
+              else
+              {
+                  while(N>=D) 
+                  {
+                      q+=1;
+                      N = N-D;
+                  } 
+                  Console.WriteLine("Quetiont ={0} and Reminder={1}",q, N);
+                  if(N==0)
+                  {
+                      return true;
+                  }
+                  else
+                  {
+                      return false;
+                  }
+              }
+         }               
+    }
