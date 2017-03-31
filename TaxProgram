@@ -1,0 +1,63 @@
+
+public static void main(string[] Args)
+{
+Console.WriteLine("Are you male or female");
+string gender=Console.ReadLine();
+Console.WriteLine("Please Enter your Salary");
+int sal=Convert.ToInt32(Console.ReadLine());
+            
+            
+            double percentage;
+            float taxedmoney;
+         switch (gender.ToUpper())
+         {
+            case "MALE":  
+               if(sal<25)
+               {
+                   Console.WriteLine("No Tax For you");
+               }
+               else if(sal>=25 & sal<=50)
+               {
+                   percentage = 0.1;
+                   Console.WriteLine("Your tax Percentage is 10% and Your Tax Money is {0}",sal*percentage  );
+               }
+               else if(sal>=50 & sal<=75)
+               {
+                   percentage = 0.2;
+                   Console.WriteLine("Your tax is  20% and Your Tax Money is  {0}", sal*percentage);
+               }
+               else 
+               {
+                   percentage = 0.3;
+                   Console.WriteLine("Your tax is  30% and Your Tax Money is  {0}", sal*percentage);
+               }
+              break;
+             
+             case "FEMALE":
+               if(sal<25)
+               {
+                   percentage = 0.00;
+                   Console.WriteLine("Tax For you {0}", sal*percentage); 
+               }
+               else if(sal>=25 & sal<=50)
+               {
+                   percentage = 0.08;
+                   Console.WriteLine("Your tax is  8% and Your Tax Money is {0}", sal*percentage);
+               }
+               else if(sal>=50 & sal<=75)
+               {
+                   percentage = 0.18;
+                   Console.WriteLine("Your tax is  18% and Your Tax Money is {0}", sal*percentage);
+               }
+               else
+               {
+                   percentage = 0.28;
+                   Console.WriteLine("Your tax is  28% and Your Tax Money is {0}", sal*percentage);
+               }
+              break;
+             
+             default:
+               Console.WriteLine("Your Choice {0} is invalid Try Again.....", gender);
+             break;
+         }
+}
