@@ -1,0 +1,20 @@
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Enter the number:");
+            int a = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Enter the divisor:");
+            int d = Convert.ToInt32(Console.ReadLine());
+            if (d == 0) 
+                throw new DivideByZeroException();
+            int q = 0,r=0;
+            while (a - d >= 0)
+            {
+                q++;
+                a = a - d;
+            }
+            r = a;
+            Console.WriteLine("quotient={0},remainder={1}",q,r);
+        }
+    }
