@@ -1,0 +1,28 @@
+ public class Program
+    {
+        public static void Main(string[] args)
+        {
+            Console.WriteLine(checkFirstTwoChars());
+        }
+        
+        public static bool checkFirstTwoChars()
+        {
+           List<string> list = new List<string>();
+           list.Add("aa");
+           
+           for(int j=0; j<list.Count(); j++)
+           {
+              string eachWordFromList =list[j]; 
+              char[] cArray =eachWordFromList.ToCharArray();
+              for(int i=0; i<cArray.Length-1; i++)
+              {
+                 if(char.ToUpper(cArray[i])==char.ToUpper(cArray[i+1]))
+                 {
+                    return true;
+                 }
+       
+              }
+           }
+           return false;
+         }
+    }
