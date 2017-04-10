@@ -1,0 +1,14 @@
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+           Console.WriteLine("Enter a Number");
+           int input = Convert.ToInt32(Console.Readline();)
+           Console.WriteLine(isPowerTwo(input));
+          
+            public static bool isPowerTwo(int input)
+            {
+                return((input & (input-1))==0);
+            }
+        }
+    }
