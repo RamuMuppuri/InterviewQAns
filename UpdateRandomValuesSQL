@@ -1,0 +1,50 @@
+DECLARE @MainTable TABLE (Id int)
+
+INSERT INTO @MainTable VALUES (1),(2),(3),(4),(5)
+
+DECLARE @RandomValueTable Table (Id int identity (1,1), Val NVARCHAR(200) null)
+
+INSERT INTO @RandomValueTable VALUES ('181115.')
+	,('202202.')
+	,('161108.')
+	,('162816.')
+	,('194506.')
+	,('172102.')
+	,('194405.')
+	,('162206.')
+	,('191114.')
+	,('182515.')
+
+;WITH TempCTE AS 
+(
+	SELECT 
+		MT.Id
+	  , RV.Val
+	  , ROW_NUMBER() OVER (PARTITION BY MT.Id ORDER BY NEWID()) AS RN
+	FROM @MainTable MT
+		JOIN  @RandomValueTable RV ON 1 = 1
+)
+
+
+SELECT * FROM TempCTE WHERE RN = 1 ORDER BY Id
+
+--;WITH TempCTE AS 
+--(
+--	SELECT 
+--		MT.Id,
+--		MT.EmployeeName
+--	  , RV.Val AS  ContractId
+--	  , ROW_NUMBER() OVER (PARTITION BY MT.Id ORDER BY NEWID()) AS RN
+--	FROM [dbo].[TempEmployee] MT
+--		JOIN  @RandomValueTable RV ON 1 = 1
+--)
+
+--UPDATE Emp 
+--	SET Emp.ContractId = T.ContractId
+--FROM TempEmployee Emp
+--	INNER JOIN (
+--			SELECT 
+--				* 
+--			FROM TempCTE 
+--			WHERE RN = 1 
+--	) T ON T.EmployeeName = Emp.EmployeeNa
