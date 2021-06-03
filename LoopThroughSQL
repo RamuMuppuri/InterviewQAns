@@ -1,0 +1,41 @@
+
+	DECLARE @ContractId NVARCHAR(200) = NULL; 
+
+	IF OBJECT_ID('tempdb..#ConvergeContracts') IS NOT NULL 
+	DROP TABLE #ConvergeContracts
+
+	CREATE TABLE #ConvergeContracts(Id INT PRIMARY KEY IDENTITY(1,1), ContractId BIGINT)
+
+	INSERT INTO #ConvergeContracts (ContractId) VALUES
+	('181115.')
+	,('202202.')
+	,('161108.')
+	,('162816.')
+	,('194506.')
+	,('172102.')
+	,('194405.')
+	,('162206.')
+	,('191114.')
+	,('182515.')
+
+	-- Get the total amount of rows and set the counter to 1
+	DECLARE @TotalRows INT =(SELECT COUNT(*) FROM #ConvergeContracts), @i INT=1 
+
+	-- begin as long as i (counter) is less than or equal to the total number of records
+	WHILE @i<=@TotalRows 
+
+	-- ‘While’ loop begins here
+	BEGIN 
+		SELECT @ContractId = ContractId from #ConvergeContracts WHERE Id =@i
+
+		PRINT @ContractId
+
+	
+		SET @i=@i+1
+	-- While loop ends here
+	END 
+
+	DROP TABLE #ConvergeContracts
+
+
+
