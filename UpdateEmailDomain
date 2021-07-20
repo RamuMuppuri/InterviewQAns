@@ -1,0 +1,76 @@
+CREATE PROCEDURE [dbo].[SP_Update_Email_Domain] 
+
+AS
+	BEGIN
+	DECLARE	 @userName NVARCHAR(1000) = NULL;
+	DECLARE	 @email NVARCHAR(1000) = NULL;
+	DECLARE	 @newemail NVARCHAR(1000) = NULL;
+	DECLARE	 @userId NVARCHAR(50) = NULL;
+
+	IF OBJECT_ID('tempdb..#UserNames') IS NOT NULL 
+	DROP TABLE #UserNames
+
+	CREATE TABLE #UserNames(Id INT PRIMARY KEY IDENTITY(1,1), UserName NVARCHAR(1000) )
+
+	;WITH cte (UserName, Cnt) AS (
+		SELECT 
+			UserName ,
+			COUNT(*)  AS Cnt
+		FROM (
+			SELECT SUBSTRING(UserName, 0, charindex('@', UserName, 0)) AS UserName
+			FROM CTS..[User]
+		) AS T 
+		GROUP BY  UserName
+		HAVING COUNT(UserName)>1	
+	)
+
+	INSERT INTO #UserNames (UserName)
+	SELECT UserName FROM cte
+	
+	-- Get the total amount of rows and set the counter to 1
+	DECLARE @TotalRows INT =(SELECT COUNT(*) FROM #UserNames), @i INT=1 
+
+	-- begin as long as i (counter) is less than or equal to the total number of records
+	WHILE @i<=@TotalRows 
+
+	-- ‘While’ loop begins here
+	BEGIN 
+		SELECT @userName = UserName from #UserNames WHERE Id =@i
+
+		SELECT TOP 1 
+			@userId = Id,
+			@email = Email
+		FROM [User] 
+		WHERE UserName like '%'+@userName+'%'
+
+		--PRINT @userName + '- ' + @userId 
+		SET @newemail = @userName + '1'+ RIGHT(@email, CHARINDEX('@', REVERSE(@email)));
+		PRINT @newemail;
+		UPDATE [User]
+			SET UserName = @newemail,
+				Email = @newemail,
+				NormalizedEmail = UPPER(@newemail) ,
+				NormalizedUserName = UPPER(@newemail)
+		WHERE Id = @userId
+
+		SET @i=@i+1
+
+		--if last row then update all values
+		IF @i > @TotalRows
+		BEGIN
+			UPDATE [User]
+				SET UserName = REPLACE(UserName, RIGHT(UserName, CHARINDEX('@', REVERSE(UserName)) - 1), 'mailinator.com'),
+					Email = REPLACE(Email, RIGHT(Email, CHARINDEX('@', REVERSE(Email)) - 1), 'mailinator.com'),
+					NormalizedEmail = REPLACE(NormalizedEmail, RIGHT(NormalizedEmail, CHARINDEX('@', REVERSE(NormalizedEmail)) - 1), 'MAILINATOR.COM') ,
+					NormalizedUserName = REPLACE(NormalizedUserName, RIGHT(NormalizedUserName, CHARINDEX('@', REVERSE(NormalizedUserName)) - 1), 'MAILINATOR.COM') 
+		END
+
+	-- While loop ends here
+	END 
+
+	DROP TABLE #UserNames
+
+    END        
+GO
+
+--EXEC [dbo].[SP_Update_Email_Domain] 
