@@ -1,0 +1,26 @@
+SELECT 
+	* 
+FROM (
+	SELECT 
+		Id, 
+		UserName, 
+		ROW_NUMBER() OVER(ORDER BY UserName ASC) AS Row# 
+	FROM dbo.[User] 
+	WHERE UserName IN 
+	(
+		SELECT T.UserName + '@mailinator.com' 
+		FROM (
+			SELECT 
+				UserName ,
+				COUNT(*)  AS Count
+			FROM (
+				SELECT SUBSTRING(UserName, 0, charindex('@', UserName, 0)) AS UserName
+				FROM [User]
+			) AS T 
+			GROUP BY  UserName
+			HAVING COUNT(UserName)>1
+		)  AS T 
+	)
+) TBL
+WHERE TBL.Row# % 2 = 0
+ORDER BY TBL.UserName
