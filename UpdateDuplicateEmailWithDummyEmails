@@ -1,0 +1,50 @@
+
+/*
+Update duplicate emails with dummy name
+
+*/
+WITH cte AS
+( 
+	SELECT 
+		Id, 
+        Email, 
+        ROW_NUMBER() OVER (PARTITION BY email ORDER BY id) RN
+    FROM dbo.[User] 
+)
+UPDATE dbo.[User] 
+SET UserName = CONCAT(RN - 1, cte.email),
+	Email = CONCAT(RN - 1, cte.email),
+	NormalizedEmail = UPPER(CONCAT(RN - 1, cte.email)) ,
+	NormalizedUserName = UPPER(CONCAT(RN - 1, cte.email)) 
+FROM dbo.[User] U1
+	LEFT JOIN cte CTE ON cte.Email = U1.Email
+AND cte.id = u1.id
+WHERE U1.Id IN 
+(
+	
+	SELECT 
+		Id 
+	FROM (
+		SELECT 
+			Id, 
+			UserName, 
+			ROW_NUMBER() OVER(ORDER BY UserName ASC) AS Row# 
+		FROM dbo.[User] 
+		WHERE UserName IN 
+		(
+			SELECT T.UserName + '@mailinator.com' 
+			FROM (
+				SELECT 
+					UserName ,
+					COUNT(*)  AS Count
+				FROM (
+					SELECT SUBSTRING(UserName, 0, charindex('@', UserName, 0)) AS UserName
+					FROM [User]
+				) AS T 
+				GROUP BY  UserName
+				HAVING COUNT(UserName)>1
+			)  AS T 
+		)
+	) TBL
+	WHERE TBL.Row# % 2 = 0
+)
