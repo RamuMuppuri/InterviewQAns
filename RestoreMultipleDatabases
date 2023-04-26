@@ -1,0 +1,42 @@
+--New Query
+-- To allow advanced options to be changed.
+EXEC sp_configure 'show advanced options', 1;
+GO
+-- To update the currently configured value for advanced options.
+RECONFIGURE;
+GO
+-- To enable the feature.
+EXEC sp_configure 'xp_cmdshell', 1;
+GO
+-- To update the currently configured value for this feature.
+RECONFIGURE;
+GO
+
+--restore all databases
+DECLARE @FilesCmdshell TABLE (
+    outputCmd NVARCHAR (255)
+)
+DECLARE @FilesCmdshellCursor CURSOR
+DECLARE @FilesCmdshellOutputCmd AS NVARCHAR(255)
+ 
+INSERT INTO @FilesCmdshell (outputCmd) EXEC master.sys.xp_cmdshell 'dir /B  D:\backup\*.bak'
+SET @FilesCmdshellCursor = CURSOR FOR SELECT outputCmd FROM @FilesCmdshell
+ 
+OPEN @FilesCmdshellCursor
+FETCH NEXT FROM @FilesCmdshellCursor INTO @FilesCmdshellOutputCmd
+WHILE @@FETCH_STATUS = 0
+BEGIN
+DECLARE @cmd NVARCHAR(MAX) = 'RESTORE DATABASE [' + SUBSTRING(@FilesCmdshellOutputCmd, 0, CHARINDEX('.', @FilesCmdshellOutputCmd)) + '] FROM DISK = N''D:\backup\' + SUBSTRING(@FilesCmdshellOutputCmd, 0, CHARINDEX('.', @FilesCmdshellOutputCmd)) + '.bak'' WITH FILE = 1, NOUNLOAD, STATS = 10'
+EXEC(@cmd)
+ 
+FETCH NEXT FROM @FilesCmdshellCursor INTO @FilesCmdshellOutputCmd
+END
+
+--generate script to restore all databes in sql server
+
+DECLARE @folderpath VARCHAR (1000)
+SELECT @folderpath = 'D:\Backup\' -- Backup Location
+SELECT 'RESTORE DATABASE['+NAME+'] FROM DISK = ''' +@folderpath+name+'.bak'' WITH NORECOVERY,
+REPLACE, STATS = 5'
+FROM master.sys.databases
+WHERE name NOT IN ('master','model','msdb','tempdb','distribution')
